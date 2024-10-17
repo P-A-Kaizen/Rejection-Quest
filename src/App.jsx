@@ -1,8 +1,14 @@
-import { useState } from "react";
-import "./App.css";
+// src/App.jsx
+
+import React from "react";
+import HomePage from "./components/HomePage";
 
 function App() {
-  return <></>;
+  return (
+    <div>
+      <HomePage />
+    </div>
+  );
 }
 
 export default App;
