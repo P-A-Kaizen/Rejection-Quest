@@ -6,6 +6,13 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        dark: '#0B0C10',
+        darker: '#1F2833',
+        light: '#C5C6C7',
+        accent: '#66FCF1',
+        primary: '#45A29E',
+      },
       fontFamily: {
         // Set Raleway as the default for headings
         heading: ['Raleway', 'sans-serif'],

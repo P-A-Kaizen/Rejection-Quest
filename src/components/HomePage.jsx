@@ -2,6 +2,27 @@
 
 import React from "react";
 import { Tab } from "@headlessui/react";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCJqvqij6xjykJHGq0x4m3JJAqGRwDIhOI",
+  authDomain: "rejectiondb.firebaseapp.com",
+  projectId: "rejectiondb",
+  storageBucket: "rejectiondb.appspot.com",
+  messagingSenderId: "165068198440",
+  appId: "1:165068198440:web:aab09f0fc1b3fa320d9b1d",
+  measurementId: "G-QPJ9L4V5CH",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 function HomePage() {
   const sections = [
