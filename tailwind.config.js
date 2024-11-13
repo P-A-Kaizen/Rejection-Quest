@@ -10,8 +10,8 @@ export default {
         dark: '#0B0C10',
         darker: '#1F2833',
         light: '#C5C6C7',
-        accent: '#66FCF1',
-        primary: '#45A29E',
+        accent: '#d73600',
+        primary: '#ac8506',
       },
       fontFamily: {
         // Set Raleway as the default for headings

@@ -25,8 +25,10 @@ function App() {
       <h6>Heading Level 6</h6>
       <p>This is a paragraph following Heading 6.</p>
 
-      <p class="text-danger">This is a paragraph with the danger color.</p>
-      <p class="text-warning">This is a paragraph with the warning color.</p>
+      <p className="text-danger">This is a paragraph with the danger color.</p>
+      <p className="text-warning">
+        This is a paragraph with the warning color.
+      </p>
     </div>
   );
 }
