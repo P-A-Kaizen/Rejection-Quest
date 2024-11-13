@@ -1,0 +1,14 @@
+type User {
+  email: String
+  name: String
+}
+
+type Query {
+  getUsers(id: ID!): User
+    @rest(
+      endpoint: "https://rejectiondb-default-rtdb.firebaseio.com/user/$id.json"
+    )
+
+  getUsersList: [User]
+    @rest(endpoint: "https://rejectiondb-default-rtdb.firebaseio.com/user.json")
+}
