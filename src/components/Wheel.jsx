@@ -122,7 +122,7 @@ function WheelComponent() {
             ref={containerRef}
           ></div>
           <img
-            src="src/assets/images/pointer.png"
+            src="/assets/images/pointer.png"
             alt="Pointer"
             className="absolute"
             style={{
