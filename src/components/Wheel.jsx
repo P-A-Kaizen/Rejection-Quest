@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, memo, useState } from "react";
 import { Wheel } from "spin-wheel";
+import pointer from "../assets/images/pointer.png";
 
 function WheelComponent() {
   const containerRef = useRef(null);
@@ -122,7 +123,7 @@ function WheelComponent() {
             ref={containerRef}
           ></div>
           <img
-            src="/assets/images/pointer.png"
+            src={pointer}
             alt="Pointer"
             className="absolute"
             style={{
