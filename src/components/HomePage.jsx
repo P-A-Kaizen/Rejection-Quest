@@ -3,6 +3,7 @@
 import React from "react";
 import { Tab } from "@headlessui/react";
 import WheelComponent from "./Wheel";
+import Logo from "../assets/images/RejectionQuest logo.png";
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
@@ -186,10 +187,7 @@ function HomePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <img
-        className="mx-auto h-36"
-        src="src\assets\images\RejectionQuest logo.png"
-      ></img>
+      <img className="mx-auto h-36" src={Logo}></img>
 
       <WheelComponent />
       {/* <Tab.Group>
