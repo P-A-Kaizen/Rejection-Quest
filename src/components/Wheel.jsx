@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, memo, useState } from "react";
 import { Wheel } from "spin-wheel";
 import pointer from "../assets/images/pointer.png";
+import { fetchWheelData, writeWheelData } from "../utils/wheelService.js";
 
 function WheelComponent() {
   const containerRef = useRef(null);
@@ -13,50 +14,24 @@ function WheelComponent() {
 
   const spinDuration = 2000;
 
+  const write = async () =>
+    await writeWheelData({ label: newChallenge }).then(() => {
+      setWeeklyChallanges((prevArray) => [
+        ...prevArray,
+        { label: newChallenge },
+      ]);
+    });
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        "https://rejectiondb-default-rtdb.firebaseio.com/weekly.json"
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
+      const data = await fetchWheelData();
       setWeeklyChallanges(Object.values(data).filter((item) => item != null));
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const writeData = async (newData) => {
-    const id = Math.random().toString(36).substr(2, 9); // Generate a random ID
-    try {
-      const response = await fetch(
-        `https://rejectiondb-default-rtdb.firebaseio.com/weekly/${id}.json`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newData),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      console.log("Data written successfully:", data);
-      // Update the weeklyChallanges state with the new challenge
-      setWeeklyChallanges((prevArray) => [
-        ...prevArray,
-        { label: newData.label },
-      ]);
-    } catch (err) {
-      console.error("Error writing data:", err);
     }
   };
 
@@ -118,7 +93,12 @@ function WheelComponent() {
 
   const handleAddChallenge = () => {
     if (newChallenge.trim() !== "") {
-      writeData({ label: newChallenge });
+      write();
+      wheelRef.current.remove();
+
+      wheelRef.current = new Wheel(containerRef.current, {
+        items: weeklyChallanges,
+      });
       setNewChallenge(""); // Clear the textarea
     }
   };
