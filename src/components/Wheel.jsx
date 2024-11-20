@@ -24,7 +24,6 @@ function WheelComponent() {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      debugger;
       setWeeklyChallanges(Object.values(data).filter((item) => item != null));
     } catch (err) {
       setError(err.message);
@@ -94,6 +93,20 @@ function WheelComponent() {
       );
 
       setTimeout(() => {
+        // Remove the selected item from the weeklyChallanges array
+        const updatedChallenges = weeklyChallanges.filter(
+          (_, index) => index !== newIndex
+        );
+        setWeeklyChallanges(updatedChallenges);
+
+        // Remove the old wheel
+        wheelRef.current.remove();
+
+        // Reinitialize the wheel with the updated challenges
+        wheelRef.current = new Wheel(containerRef.current, {
+          items: updatedChallenges,
+        });
+
         // Add the selected item to the winnerArray
         setWinnerArray((prevArray) => [
           ...prevArray,
@@ -102,6 +115,7 @@ function WheelComponent() {
       }, spinDuration);
     }
   };
+
   const handleAddChallenge = () => {
     if (newChallenge.trim() !== "") {
       writeData({ label: newChallenge });
