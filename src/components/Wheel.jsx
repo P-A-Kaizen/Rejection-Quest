@@ -3,11 +3,11 @@ import { Wheel } from "spin-wheel";
 import pointer from "../assets/images/pointer.png";
 import { fetchWheelData, writeWheelData } from "../utils/wheelService.js";
 
-function WheelComponent() {
+function WheelComponent({ endpoint, title }) {
   const containerRef = useRef(null);
   const wheelRef = useRef(null);
   const [winnerArray, setWinnerArray] = useState([]);
-  const [weeklyChallanges, setWeeklyChallanges] = useState([]);
+  const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [newChallenge, setNewChallenge] = useState("");
@@ -15,19 +15,21 @@ function WheelComponent() {
   const spinDuration = 2000;
 
   const write = async () =>
-    await writeWheelData({ label: newChallenge }).then(() => {
-      setWeeklyChallanges((prevArray) => [
-        ...prevArray,
-        { label: newChallenge },
-      ]);
+    await writeWheelData(endpoint, { label: newChallenge }).then(() => {
+      setChallenges((prevArray) => [...prevArray, { label: newChallenge }]);
+      wheelRef.current.remove();
+
+      wheelRef.current = new Wheel(containerRef.current, {
+        items: [...challenges, { label: newChallenge }],
+      });
     });
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchWheelData();
-      setWeeklyChallanges(Object.values(data).filter((item) => item != null));
+      const data = await fetchWheelData(endpoint);
+      setChallenges(Object.values(data).filter((item) => item != null));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,25 +39,21 @@ function WheelComponent() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [endpoint]);
 
   useEffect(() => {
-    if (
-      containerRef.current &&
-      !wheelRef.current &&
-      weeklyChallanges.length > 0
-    ) {
+    if (containerRef.current && !wheelRef.current && challenges.length > 0) {
       // Initialize the wheel
       wheelRef.current = new Wheel(containerRef.current, {
-        items: weeklyChallanges,
+        items: challenges,
       });
     }
-  }, [weeklyChallanges]);
+  }, [challenges]);
 
   const spinWheel = async () => {
     if (wheelRef.current) {
       // Choose a random item index to spin to
-      const newIndex = Math.floor(Math.random() * weeklyChallanges.length);
+      const newIndex = Math.floor(Math.random() * challenges.length);
       const easingFunction = "easeOutCubic"; // Easing function, as suggested by the library
       const rotations = 10; // Number of rotations to make the wheel spin faster
 
@@ -68,11 +66,11 @@ function WheelComponent() {
       );
 
       setTimeout(() => {
-        // Remove the selected item from the weeklyChallanges array
-        const updatedChallenges = weeklyChallanges.filter(
+        // Remove the selected item from the challenges array
+        const updatedChallenges = challenges.filter(
           (_, index) => index !== newIndex
         );
-        setWeeklyChallanges(updatedChallenges);
+        setChallenges(updatedChallenges);
 
         // Remove the old wheel
         wheelRef.current.remove();
@@ -85,7 +83,7 @@ function WheelComponent() {
         // Add the selected item to the winnerArray
         setWinnerArray((prevArray) => [
           ...prevArray,
-          weeklyChallanges[newIndex].label,
+          challenges[newIndex].label,
         ]);
       }, spinDuration);
     }
@@ -94,11 +92,6 @@ function WheelComponent() {
   const handleAddChallenge = () => {
     if (newChallenge.trim() !== "") {
       write();
-      wheelRef.current.remove();
-
-      wheelRef.current = new Wheel(containerRef.current, {
-        items: weeklyChallanges,
-      });
       setNewChallenge(""); // Clear the textarea
     }
   };
@@ -107,8 +100,8 @@ function WheelComponent() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <h1 className="text-center">Weekly</h1>
+    <div className="flex flex-col items-center w-full my-10">
+      <h1 className="text-center">{title}</h1>
       <div className="flex flex-col md:flex-row items-center w-full md:w-3/4">
         <div className="relative w-full md:w-1/2" style={{ height: "400px" }}>
           <div
@@ -130,7 +123,7 @@ function WheelComponent() {
           />
         </div>
         <div className="w-full md:w-1/2 mt-4 md:mt-0 md:ml-4">
-          <h1 className="text-center md:text-start">Weekly Challanges</h1>
+          <h1 className="text-center md:text-start">Challenges</h1>
           <ul
             className="overflow-y-scroll text-center md:text-start h-40"
             style={{
@@ -166,7 +159,7 @@ function WheelComponent() {
           onChange={(e) => setNewChallenge(e.target.value)}
         ></textarea>
         <button
-          className="mt-2 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded"
+          className=" bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded"
           onClick={handleAddChallenge}
         >
           Add Challenge
