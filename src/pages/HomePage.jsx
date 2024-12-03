@@ -12,7 +12,7 @@ function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold text-accent mb-4 place-self-end">
-        {user ? user[0].user.displayName : "Guest"}
+        {user[0].user.displayName ? user[0].user.displayName : "Guest"}
       </h1>
       <Link to="/login">
         <button className="fixed mt-2 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded">

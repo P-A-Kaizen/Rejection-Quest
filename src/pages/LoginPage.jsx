@@ -71,9 +71,6 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       setUserDetails(result.user);
-      console.log("Google sign-in successful:", user);
-      debugger;
-
       // Redirect or update UI after successful login
     } catch (err) {
       setError(err.message);
