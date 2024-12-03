@@ -1,9 +1,37 @@
 import React, { useState } from "react";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { useAuth } from "../utils/auth";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJqvqij6xjykJHGq0x4m3JJAqGRwDIhOI",
+  authDomain: "rejectiondb.firebaseapp.com",
+  databaseURL: "https://rejectiondb-default-rtdb.firebaseio.com",
+  projectId: "rejectiondb",
+  storageBucket: "rejectiondb.firebasestorage.app",
+  messagingSenderId: "165068198440",
+  appId: "1:165068198440:web:aab09f0fc1b3fa320d9b1d",
+  measurementId: "G-QPJ9L4V5CH",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+
+  const [user, setUserDetails] = useState(useAuth());
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,23 +43,36 @@ export default function LoginPage() {
       return;
     }
 
-    // Example of form submission
+    // Firebase Authentication with Email and Password
     try {
-      // Replace with your authentication logic
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      console.log("Login successful:", user);
 
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
+      // Redirect or update UI after successful login
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-      const data = await response.json();
-      console.log("Login successful:", data);
+  const handleGoogleSignIn = async () => {
+    // if (user) {
+    //   console.log("User is already signed in:", user);
+    //   return;
+    // }
+
+    setError(null);
+
+    // Firebase Authentication with Google
+    try {
+      const result = await signInWithPopup(auth, provider);
+      setUserDetails(result.user);
+      console.log("Google sign-in successful:", user);
+      debugger;
 
       // Redirect or update UI after successful login
     } catch (err) {
@@ -76,6 +117,13 @@ export default function LoginPage() {
           className="w-full bg-accent text-white p-2 rounded hover:bg-primary"
         >
           Login
+        </button>
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          className="mt-3 w-full bg-accent text-white p-2 rounded hover:bg-primary"
+        >
+          Sign in with Google
         </button>
       </form>
     </div>

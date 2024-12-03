@@ -1,3 +1,6 @@
+import {useAuth} from "./authService";
+
+
 const fetchWheelData = async (endpoint) => {
   try {
     const response = await fetch("https://rejectiondb-default-rtdb.firebaseio.com/" + endpoint + ".json");
@@ -15,6 +18,7 @@ const fetchWheelData = async (endpoint) => {
 
 const writeWheelData = async (endpoint, newData) => {
   const id = Math.random().toString(36).substr(2, 9); // Generate a random ID
+  const user = useAuth();
   try {
     const response = await fetch(
       `https://rejectiondb-default-rtdb.firebaseio.com/${endpoint}/${id}.json`,
