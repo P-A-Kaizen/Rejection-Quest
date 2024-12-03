@@ -1,4 +1,4 @@
-import {useAuth} from "./authService";
+import {useAuth} from "./auth";
 
 
 const fetchWheelData = async (endpoint) => {
