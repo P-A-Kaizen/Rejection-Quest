@@ -98,8 +98,7 @@ function WheelComponent({ challengeType, title }) {
       );
 
       setTimeout(() => {
-        debugger;
-        if (winnerArray.length > 5) {
+        if (winnerArray.length > 4) {
           return;
         }
         // Remove the selected item from the challenges array
@@ -126,7 +125,6 @@ function WheelComponent({ challengeType, title }) {
   };
 
   const handleDeleteChallenge = async (key) => {
-    debugger;
     await deleteUserChallenge(user.uid, key).then(() => {
       setWinnerArray((prevArray) =>
         prevArray.filter((item) => item.key !== key)

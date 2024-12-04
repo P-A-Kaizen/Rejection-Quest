@@ -7,8 +7,8 @@ import {
 } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { useAuth } from "../utils/auth";
-import { Link } from "react-router-dom";
+import { useAuth, createUser } from "../utils/auth";
+import { Link, useNavigate } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCJqvqij6xjykJHGq0x4m3JJAqGRwDIhOI",
@@ -31,6 +31,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const [user, setUserDetails] = useState(useAuth());
 
@@ -66,7 +67,15 @@ export default function LoginPage() {
     // Firebase Authentication with Google
     try {
       const result = await signInWithPopup(auth, provider);
+      const isNewUser =
+        result.user.metadata.creationTime ===
+        result.user.metadata.lastSignInTime;
+      if (isNewUser) {
+        // Create user in Firebase Database
+        createUser();
+      }
       setUserDetails(result.user);
+      navigate("/");
       // Redirect or update UI after successful login
     } catch (err) {
       setError(err.message);
