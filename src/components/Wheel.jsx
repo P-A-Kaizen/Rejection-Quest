@@ -1,9 +1,16 @@
 import React, { useRef, useEffect, memo, useState } from "react";
 import { Wheel } from "spin-wheel";
+import {
+  fetchWheelData,
+  writeWheelData,
+  fetchUserChallenges,
+  addUserChallenge,
+  deleteUserChallenge,
+} from "../utils/wheelService.js";
 import pointer from "../assets/images/pointer.png";
-import { fetchWheelData, writeWheelData } from "../utils/wheelService.js";
+import { useAuth } from "../utils/auth";
 
-function WheelComponent({ endpoint, title }) {
+function WheelComponent({ challengeType, title }) {
   const containerRef = useRef(null);
   const wheelRef = useRef(null);
   const [winnerArray, setWinnerArray] = useState([]);
@@ -11,25 +18,33 @@ function WheelComponent({ endpoint, title }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [newChallenge, setNewChallenge] = useState("");
+  const user = useState(useAuth())[0].user;
 
   const spinDuration = 2000;
 
-  const write = async () =>
-    await writeWheelData(endpoint, { label: newChallenge }).then(() => {
-      setChallenges((prevArray) => [...prevArray, { label: newChallenge }]);
-      wheelRef.current.remove();
+  const write = async () => {
+    await writeWheelData({ label: newChallenge, type: challengeType }).then(
+      () => {
+        setChallenges((prevArray) => [...prevArray, { label: newChallenge }]);
+        wheelRef.current.remove();
 
-      wheelRef.current = new Wheel(containerRef.current, {
-        items: [...challenges, { label: newChallenge }],
-      });
-    });
+        wheelRef.current = new Wheel(containerRef.current, {
+          items: [...challenges, { label: newChallenge }],
+        });
+      }
+    );
+  };
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchWheelData(endpoint);
-      setChallenges(Object.values(data).filter((item) => item != null));
+      const data = await fetchWheelData();
+      setChallenges(
+        Object.entries(data)
+          .filter(([key, item]) => item != null && item.type === challengeType)
+          .map(([key, item]) => ({ ...item, key }))
+      );
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,9 +52,26 @@ function WheelComponent({ endpoint, title }) {
     }
   };
 
+  const fetchUserChallenge = async () => {
+    try {
+      const userChallenges = await fetchUserChallenges(user.uid);
+      setWinnerArray(
+        Object.entries(userChallenges)
+          .filter(([key, item]) => item.type === challengeType)
+          .map(([key, item]) => ({ ...item, key }))
+      );
+    } catch (err) {
+      console.error("Error fetching user challenges:", err);
+    }
+  };
+
   useEffect(() => {
     fetchData();
-  }, [endpoint]);
+
+    if (user) {
+      fetchUserChallenge();
+    }
+  }, [challengeType]);
 
   useEffect(() => {
     if (containerRef.current && !wheelRef.current && challenges.length > 0) {
@@ -66,6 +98,10 @@ function WheelComponent({ endpoint, title }) {
       );
 
       setTimeout(() => {
+        debugger;
+        if (winnerArray.length > 5) {
+          return;
+        }
         // Remove the selected item from the challenges array
         const updatedChallenges = challenges.filter(
           (_, index) => index !== newIndex
@@ -81,12 +117,21 @@ function WheelComponent({ endpoint, title }) {
         });
 
         // Add the selected item to the winnerArray
-        setWinnerArray((prevArray) => [
-          ...prevArray,
-          challenges[newIndex].label,
-        ]);
+        setWinnerArray((prevArray) => [...prevArray, challenges[newIndex]]);
+
+        // Update the user's challenges
+        addUserChallenge(user.uid, challenges[newIndex]);
       }, spinDuration);
     }
+  };
+
+  const handleDeleteChallenge = async (key) => {
+    debugger;
+    await deleteUserChallenge(user.uid, key).then(() => {
+      setWinnerArray((prevArray) =>
+        prevArray.filter((item) => item.key !== key)
+      );
+    });
   };
 
   const handleAddChallenge = () => {
@@ -131,9 +176,18 @@ function WheelComponent({ endpoint, title }) {
               scrollbarWidth: "none", // Firefox
             }}
           >
-            {winnerArray.map((item, index) => (
-              <li key={index} className="text-primary">
-                {item}
+            {winnerArray.map((item) => (
+              <li
+                key={item.key}
+                className="text-primary flex justify-between items-center"
+              >
+                {item.label}
+                <button
+                  className="text-red-500 ml-2"
+                  onClick={() => handleDeleteChallenge(item.key)}
+                >
+                  X
+                </button>
               </li>
             ))}
           </ul>

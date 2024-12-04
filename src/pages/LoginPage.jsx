@@ -8,6 +8,7 @@ import {
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { useAuth } from "../utils/auth";
+import { Link } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCJqvqij6xjykJHGq0x4m3JJAqGRwDIhOI",
@@ -78,51 +79,58 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-dark">
-      <h1 className="text-4xl font-bold text-accent mb-4">Login</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow-md w-full max-w-sm"
-      >
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-primary">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="w-full p-2 border border-gray-300 rounded mt-1"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="password" className="block text-primary">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="w-full p-2 border border-gray-300 rounded mt-1"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-accent text-white p-2 rounded hover:bg-primary"
-        >
-          Login
+    <>
+      <Link to="/">
+        <button className="fixed mt-2 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded">
+          Back
         </button>
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          className="mt-3 w-full bg-accent text-white p-2 rounded hover:bg-primary"
+      </Link>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-4xl font-bold text-accent mb-4">Login</h1>
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-6 rounded shadow-md w-full max-w-sm"
         >
-          Sign in with Google
-        </button>
-      </form>
-    </div>
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-primary">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-primary">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="w-full p-2 border border-gray-300 rounded mt-1"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-accent text-white p-2 rounded hover:bg-primary"
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="mt-3 w-full bg-accent text-white p-2 rounded hover:bg-primary"
+          >
+            Sign in with Google
+          </button>
+        </form>
+      </div>
+    </>
   );
 }
