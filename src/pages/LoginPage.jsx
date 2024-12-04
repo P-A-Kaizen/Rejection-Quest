@@ -61,11 +61,6 @@ export default function LoginPage() {
   };
 
   const handleGoogleSignIn = async () => {
-    // if (user) {
-    //   console.log("User is already signed in:", user);
-    //   return;
-    // }
-
     setError(null);
 
     // Firebase Authentication with Google

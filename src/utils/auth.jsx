@@ -65,6 +65,7 @@ export const createUser = async () => {
 
 export const signOutUser = async () => {
   const auth = getAuth();
+  window.location.reload();
   try {
     await signOut(auth);
     console.log("User signed out successfully");
