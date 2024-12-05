@@ -25,11 +25,15 @@ function HomePage() {
           Logout
         </button>
       )}
+      <h1 className="text-4xl font-bold text-accent mt-2 place-self-end">
+        {user ? user.displayName : "Guest"}
+      </h1>
+      <Link to="/score">
+        <button className="fixed mt-3 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded">
+          Score
+        </button>
+      </Link>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-accent mb-4 place-self-end">
-          {user ? user.displayName : "Guest"}
-        </h1>
-
         <img className="mx-auto h-36" src={Logo} alt="Logo" />
         <div className="flex flex-col md:flex-row">
           <WheelComponent challengeType="weekly" title="Weekly Challenges" />
