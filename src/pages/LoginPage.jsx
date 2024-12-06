@@ -7,7 +7,8 @@ import {
 } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { useAuth, createUser } from "../utils/auth";
+import { useAuth } from "../utils/auth";
+import { createUser } from "../utils/userService";
 import { Link, useNavigate } from "react-router-dom";
 
 const firebaseConfig = {
@@ -27,14 +28,11 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-export default function LoginPage() {
+function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
-  const [user, setUserDetails] = useState(useAuth());
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -72,9 +70,8 @@ export default function LoginPage() {
         result.user.metadata.lastSignInTime;
       if (isNewUser) {
         // Create user in Firebase Database
-        createUser();
+        createUser(result.user);
       }
-      setUserDetails(result.user);
       navigate("/");
       // Redirect or update UI after successful login
     } catch (err) {
@@ -138,3 +135,5 @@ export default function LoginPage() {
     </>
   );
 }
+
+export default LoginPage;

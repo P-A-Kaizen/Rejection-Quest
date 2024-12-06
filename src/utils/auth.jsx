@@ -30,39 +30,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const createUser = async () => {
-  // Get the authenticated user
-  const user = useAuth();
-  const userData = {
-    email: user[0].user.email,
-    name: user[0].user.displayName,
-    weekly: null,
-    monthly: null,
-  };
-
-  try {
-    const response = await fetch(
-      `https://rejectiondb-default-rtdb.firebaseio.com/user/${user[0].user.uid}.json`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    console.log("Data written successfully:", data);
-    return data;
-  } catch (error) {
-    console.error("Error writing data:", error);
-    throw error; // Re-throw the error to be handled by the caller
-  }
-};
-
 export const signOutUser = async () => {
   const auth = getAuth();
   window.location.reload();

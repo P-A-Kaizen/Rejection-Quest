@@ -5,7 +5,7 @@ const fetchWheelData = async () => {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
-    return Object.values(data).filter((item) => item != null); // Ensure data is in the expected format
+    return data;
 
   } catch (error) {
     console.error("Error fetching wheel data:", error);

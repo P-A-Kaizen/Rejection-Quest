@@ -9,7 +9,6 @@ export default function ScorePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(getAuth());
-  debugger;
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
@@ -42,9 +41,10 @@ export default function ScorePage() {
       setLoading(true);
       setError(null);
       try {
-        const user = auth.currentUser;
         if (user) {
-          const userChallenges = await fetchUserChallenges(user.uid);
+          const userChallenges = await fetchUserChallenges(
+            user.currentUser.uid
+          );
           setChallenges(Object.values(userChallenges));
         }
       } catch (err) {
@@ -64,9 +64,8 @@ export default function ScorePage() {
           Back
         </button>
       </Link>
+
       {user.currentUser ? (
-        <h1></h1>
-      ) : (
         <div className="flex flex-col items-center justify-center min-h-screen  text-white">
           <h1 className="text-4xl font-bold mb-4">Scoreboard</h1>
           <div className="text-center mb-8">
@@ -101,6 +100,8 @@ export default function ScorePage() {
             )}
           </div>
         </div>
+      ) : (
+        <h1> please login</h1>
       )}
     </>
   );

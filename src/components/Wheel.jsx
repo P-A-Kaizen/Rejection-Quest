@@ -41,9 +41,9 @@ function WheelComponent({ challengeType, title }) {
     try {
       const data = await fetchWheelData();
       setChallenges(
-        Object.entries(data)
-          .filter(([key, item]) => item != null && item.type === challengeType)
-          .map(([key, item]) => ({ ...item, key }))
+        Object.values(data).filter(
+          (item) => item != null && item.type === challengeType
+        )
       );
     } catch (err) {
       setError(err.message);
@@ -115,11 +115,14 @@ function WheelComponent({ challengeType, title }) {
           items: updatedChallenges,
         });
 
+        let winner = challenges[newIndex];
+        addUserChallenge(user.uid, winner).then((key) => {
+          winner = { ...winner, key: key.name };
+        });
         // Add the selected item to the winnerArray
-        setWinnerArray((prevArray) => [...prevArray, challenges[newIndex]]);
+        setWinnerArray((prevArray) => [...prevArray, winner]);
 
         // Update the user's challenges
-        addUserChallenge(user.uid, challenges[newIndex]);
       }, spinDuration);
     }
   };
