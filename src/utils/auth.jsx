@@ -5,7 +5,7 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; // Import 
 const AuthContext = createContext(null);
 
 // Custom hook for consuming the context
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => useContext(AuthContext).user;
 
 // Auth Provider
 export const AuthProvider = ({ children }) => {

@@ -7,19 +7,19 @@ import Logo from "../assets/images/RejectionQuest logo.png";
 import { useAuth, signOutUser } from "../utils/auth";
 
 function HomePage() {
-  const user = useState(useAuth())[0].user;
+  const user = useState(useAuth())[0];
 
   return (
     <>
       {!user ? (
         <Link to="/login">
-          <button className="fixed mt-2 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded">
+          <button className="fixed mt-2 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded z-10">
             Login
           </button>
         </Link>
       ) : (
         <button
-          className="fixed mt-2 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded"
+          className="fixed mt-2 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded z-10"
           onClick={signOutUser}
         >
           Logout
@@ -29,7 +29,7 @@ function HomePage() {
         {user ? user.displayName : "Guest"}
       </h1>
       <Link to="/score">
-        <button className="fixed mt-3 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded">
+        <button className="fixed mt-3 bg-transparent hover:bg-primary text-accent font-semibold hover:text-white py-2 px-4 border border-accent hover:border-transparent rounded z-10">
           Score
         </button>
       </Link>

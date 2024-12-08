@@ -18,7 +18,7 @@ function WheelComponent({ challengeType, title }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [newChallenge, setNewChallenge] = useState("");
-  const user = useState(useAuth())[0].user;
+  const user = useState(useAuth())[0];
 
   const spinDuration = 2000;
 
@@ -116,9 +116,14 @@ function WheelComponent({ challengeType, title }) {
         });
 
         let winner = challenges[newIndex];
-        addUserChallenge(user.uid, winner).then((key) => {
-          winner = { ...winner, key: key.name };
-        });
+        if (user !== null) {
+          addUserChallenge(user.uid, winner).then((key) => {
+            winner = { ...winner, key: key.name };
+          });
+        } else {
+          winner = { ...winner, key: Math.random().toString(36).substr(2, 9) };
+        }
+
         // Add the selected item to the winnerArray
         setWinnerArray((prevArray) => [...prevArray, winner]);
 
@@ -128,11 +133,15 @@ function WheelComponent({ challengeType, title }) {
   };
 
   const handleDeleteChallenge = async (key) => {
-    await deleteUserChallenge(user.uid, key).then(() => {
-      setWinnerArray((prevArray) =>
-        prevArray.filter((item) => item.key !== key)
-      );
-    });
+    user
+      ? await deleteUserChallenge(user.uid, key).then(() => {
+          setWinnerArray((prevArray) =>
+            prevArray.filter((item) => item.key !== key)
+          );
+        })
+      : setWinnerArray((prevArray) =>
+          prevArray.filter((item) => item.key !== key)
+        );
   };
 
   const handleAddChallenge = () => {
